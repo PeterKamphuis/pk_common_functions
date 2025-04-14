@@ -452,7 +452,9 @@ def columndensity(levels,systemic = 100.,beam=None,\
     return levels
 columndensity.__doc__ =f'''
  NAME:
-    columndensity
+    columndensity(levels,systemic = 100.,beam=None,\
+        channel_width=None,column= False,arcsquare=False,solar_mass_input =False\
+        ,solar_mass_output=False, verbose= False, linewidth= None)
 
  PURPOSE:
     Convert the various surface brightnesses to other units
@@ -470,25 +472,28 @@ columndensity.__doc__ =f'''
     systemic = 100.
     the systemic velocity of the source
 
-    beam  = [-1.,-1.]
-    the FWHM of the beam in arcsec, if unset taken from Configuration
+    beam  = None
+    the FWHM of the beam in arcsec
 
-    channelwidth = -1. width of a channel in km/s
-    channelwidth of the observation if unset taken from Configuration
+    channel_width = None width of a channel in km/s
+    channelwidth of the observation
 
     column = false
-    if True input is columndensities else in mJy
+    if True levels is provided as columndensities else in mJy/beam
 
     arcsquare=False
-    If true then  input is assumed to be in Jy/arcsec^2.
-    If the input is in mJy/arcsec^2*km/s then channelwidth must be 1.
-    This is assumed when channelwidth is left unset
+    If true then  input is assumed to be in mJy/arcsec^2.
+    If the input is in mJy/arcsec^2*km/s then channel_width must be 1.
+    This is assumed when channel_width is left unset
 
     solar_mass_input =False
     If true input is assumed to be in M_solar/pc^2
 
     solar_mass_output=False
     If true output is provided in M_solar/pc^2
+
+    linewidth = None
+    if set the levels are calculated over this line width
 
  OUTPUTS:
     The converted values
