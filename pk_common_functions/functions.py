@@ -74,9 +74,10 @@ Proper_Dictionary.__doc__=f'''
 A class of ordered dictionary where keys can be inserted in at specified locations or at the end.
 '''
 
-def add_cb(plot_dict,range= None,label = None,detached=False,\
+def add_cb(plot_dict,range= None,label = None,detached=False,reverse=False,\
                     location='right', cmap ='rainbow', minimal_ticks = False,\
-                    ticks_formatter = None, include_zero=False,size=8., cbar_ticks = None):
+                    ticks_formatter = None, include_zero=False,size=8., cbar_ticks = None,
+                    cbar_tick_names = None):
     '''Add a (detached) velocity colorbar to overview for indicating the velocity colors'''
     if range is None and detached:
         raise InputError(f'You have to set a range to create a detacched colorbar')
@@ -100,10 +101,16 @@ def add_cb(plot_dict,range= None,label = None,detached=False,\
                                   cax=cb_ax, orientation=orientation)
  
     colorbar_plot.ax.zorder = -1
+
+    
     if location in ['left','right']:
         cb_ax.yaxis.set_ticks_position(location)
+        if reverse:
+            colorbar_plot.ax.invert_yaxis()
     else:
         cb_ax.xaxis.set_ticks_position(location)
+        if reverse:
+            colorbar_plot.ax.invert_xaxis()
     if range is None:
         range = [ax_use.norm.vmin,ax_use.norm.vmax]
 
@@ -121,10 +128,13 @@ def add_cb(plot_dict,range= None,label = None,detached=False,\
     if include_zero:
         replace = np.min(np.abs(tick_locations))
         tick_locations[np.abs(tick_locations)== replace] = 0.
-  
+    print(f'Setting these tick locations')
+    print(tick_locations)
     colorbar_plot.set_ticks(tick_locations)
     if not ticks_formatter is None:
-        tick_labels=[ticks_formatter(x) for x in tick_locations]
+        if cbar_tick_names is None:
+            cbar_tick_names = tick_locations
+        tick_labels=[ticks_formatter(x) for x in cbar_tick_names]
         colorbar_plot.set_ticklabels(tick_labels,size=size*0.4)
 
     if not label is None:
@@ -962,6 +972,57 @@ get_model_DHI.__doc__ =f'''
 
  NOTE:
 '''
+
+
+def get_total_flux(file_name,noise = None, channel_map = None,channel_width=1.,\
+        flux_scale_uncertainty = None):
+    image = fits.open(file_name)
+    beam_in_pixels = pixels_in_beam(image[0].header)
+
+    #We are taking these from the moment map so we have to divide out the km/s
+    flux = float(np.nansum(image[0].data)/beam_in_pixels)
+    if not channel_map is None:
+        channels = fits.open(channel_map)
+        values = channels[0].data[np.where(channels[0].data > 0)]
+        avg_channels = np.nanmean(values)
+        noise = avg_channels*noise*channel_width/beam_in_pixels
+        sumsize= values.size
+    else:
+         sumsize= image[0].data[np.where(image[0].data > 0)].size
+  
+    #Should this not have an additional channel width parameter
+    error = np.sqrt(sumsize)*noise
+    if not flux_scale_uncertainty is None:
+        error = error + flux_scale_uncertainty/100.*flux
+    image.close()
+    return [flux,error]
+get_total_flux.__doc__ =f'''
+ NAME:
+    get_totflux
+
+ PURPOSE:
+    Get the total flux from a intensity map
+
+ CATEGORY:
+    read_functions
+
+ INPUTS:
+    file_name = name of the moment 0 map 
+
+ OPTIONAL INPUTS:
+
+
+ OUTPUTS:
+    total flux in the map in units of map_units*beam
+
+ OPTIONAL OUTPUTS:
+
+ PROCEDURES CALLED:
+    Unspecified
+
+ NOTE:
+'''
+
 
 def isiterable(variable):
     '''Check whether variable is iterable'''
