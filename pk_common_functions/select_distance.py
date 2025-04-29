@@ -8,9 +8,9 @@ import numpy as np
 # an individual galaxy  
 # 
  
-def obtain_table(force_original=False):
-    csv_name = '/home/peter/Galaxies/ESO_358-60/TF/NED-D_distances/NED30.5.1-D-17.1.2-20200415.csv'
-    pickle_name = '/home/peter/Galaxies/ESO_358-60/TF/NED-D_distances/Pickled_NED_Table.pkl'
+def obtain_table(force_original=False,directory = None):
+    csv_name = f'{directory}/NED30.5.1-D-17.1.2-20200415.csv'
+    pickle_name = f'{directory}/Pickled_NED_Table.pkl'
 
     if not os.path.isfile(pickle_name) or force_original:
         distance_table = read_ned_table(csv_name)
@@ -62,10 +62,11 @@ def read_ned_table(name):
 
 
 
-def get_ned_distance(names, method = None,force_original=False):
+def get_ned_distance(names, method = None,force_original=False,
+                     directory=None):
 
 
-    table = obtain_table(force_original=force_original)
+    table = obtain_table(force_original=force_original,directory=directory)
 
     #If method is not set we use all non rulers
     # based on table 2 at  (https://ned.ipac.caltech.edu/Library/Distances/)
