@@ -690,13 +690,14 @@ def create_profile(cube,mask=None):
     return profile        
 
 def cutout_cube(filename,sub_cube, outname=None):
-
+    sub_cube = np.array(sub_cube,dtype=int)
+  
     if outname == None:
         outname = f'{os.path.splitext(filename)[0]}_cut.fits'
 
     Cube = fits.open(filename,uint = False, do_not_scale_image_data=True,ignore_blank = True, output_verify= 'ignore')
     hdr = Cube[0].header
-
+   
     if hdr['NAXIS'] == 3:
         data = Cube[0].data[sub_cube[0,0]:sub_cube[0,1],sub_cube[1,0]:sub_cube[1,1],sub_cube[2,0]:sub_cube[2,1]]
         hdr['NAXIS1'] = sub_cube[2,1]-sub_cube[2,0]
