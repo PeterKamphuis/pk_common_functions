@@ -63,7 +63,8 @@ def read_ned_table(name):
 
 
 
-def get_ned_distance(names, method = None,force_original=False,directory = ''):
+def get_ned_distance(names, method = None,force_original=False,
+                     directory=None):
 
 
     table = obtain_table(force_original=force_original,directory=directory)
