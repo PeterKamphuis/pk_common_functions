@@ -1478,7 +1478,7 @@ def set_colormap(div = None, name='CustomColorMap', bg = 'White', \
         Lval_min=25.
         # Adjust range for minor axis segment. (Default=0.05; Recommended max = 0.15)
         width=0.05  # This is the segment centred on div that will be grey (chroma = 0)
-        cmap = vmap.create_cmap_mod_chromaVelocity(colorrange[0],colorrange[1],\
+        cmap = vmap.create_cmap_chromaVelocity(colorrange[0],colorrange[1],\
             name=name, width=width, Cval_max=Cval_max, Cval_mid=Cval_mid,\
             Cval_min=Cval_min, div=div,Hval_L=Hval_L,Hval_R=Hval_R,\
             Hval_1=Hval_1,Hval_2=Hval_2,Hval_3=Hval_3,Hval_4=Hval_4, 
